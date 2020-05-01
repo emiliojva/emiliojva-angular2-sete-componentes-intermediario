@@ -333,3 +333,106 @@
       <span>outro texto</span> <!--Span será descartado. POis não existe ng-content com este seletor definido-->
     </test-ng-content>
     ```
+
+
+
+
+## ng-content targeted no component modal
+  - Efetuando divisões com ```ng-content[select='']```. o ```select``` faz a função de ```querySelector``` e casa uma tag filha para qual irá capturar o conteúdo. No exemplo abaixo, duas capturas por classe e uma por atributo:
+    ```
+    @Component({
+      selector: 'modal',
+      template: `
+      <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            
+            <div class="modal-header">
+              <ng-content select="[modal-title]"></ng-content>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            
+            <ng-content select=".modal-body"></ng-content>
+            <ng-content select="[modal-body]"></ng-content>
+          
+            <ng-content select=".modal-footer"></ng-content>
+            <ng-content select="[modal-footer]"></ng-content>
+            
+          </div>
+        </div>
+      </div>
+      `,
+      styles: [
+      ]
+    })
+    export class ModalComponent implements OnInit {
+      ...
+    }
+    ```
+  - Na view 
+    ```
+    <!-- Modal -->
+    <form action="" (submit)="addEmployee($event)">
+
+      <modal>
+        <h5 class="modal-title" id="exampleModalLabel" modal-title>Novo Empregado</h5>
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input name="name" type="text" [(ngModel)]="employee.name"/>
+          </div>
+
+          <div class="form-group">
+            <label for="salary">Salary:</label>
+            <input name="salary" type="number" [(ngModel)]="employee.salary"/>
+          </div>
+
+          <div class="form-group">
+
+            <!-- diretiva hidden -->
+            <div [hidden]="employee.salary<1000">
+              <label for="bonus">Bonus:</label>
+              <input name="bonus" type="number" [(ngModel)]="employee.bonus" />
+            </div>
+
+          </div>
+
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Incluir</button>
+        </div>
+
+      </modal>
+
+    </form>
+    ```
+
+## Usando ngOnInit no componente modal
+  - No cycleLife ngOnInit do Component Modal, consigo preecher as classes dinamicamente.
+    ```
+    ngOnInit(): void {
+
+      const modal = this.getDivModal();
+
+      if(modal){
+        
+        console.log(`Modal Component criado  dentro de ${modal.parentElement.parentElement.tagName}`);
+
+        if(modal.querySelector('[modal-title]'))
+          modal.querySelector('[modal-title]').classList.add('modal-title')
+        
+        if(modal.querySelector('[modal-body]'))
+          modal.querySelector('[modal-body]').classList.add('modal-body')
+        
+        if(modal.querySelector('[modal-footer]'))
+          modal.querySelector('[modal-footer]').classList.add('modal-footer');
+
+      }
+
+    }
+    ```
