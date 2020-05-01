@@ -1,15 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'alert-success',
-  templateUrl: './alert-success.component.html',
-  styleUrls: ['./alert-success.component.scss']
+  template: `
+    <div class="alert alert-success" role="alert">
+      <ng-content></ng-content>
+    </div>`,
+  styles: ['.alert { text-transform:uppercase}'],
 })
-export class AlertSuccessComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-}
+export class AlertSuccessComponent {}

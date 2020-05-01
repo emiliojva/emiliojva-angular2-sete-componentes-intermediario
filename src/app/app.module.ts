@@ -14,6 +14,9 @@ import { EmployeeListComponent } from './components/employee/employee-list/emplo
 import { EmployeeNewComponent } from './components/employee/employee-new/employee-new.component';
 import { EmployeeEditModalComponent } from './components/employee/employee-edit-modal/employee-edit-modal.component';
 import { EmployeeDeleteModalComponent } from './components/employee/employee-delete-modal/employee-delete-modal.component';
+import { TesteComponent } from './components/teste/teste.component';
+import { ModalComponent } from './components/modal/modal.component';
+import { TestNgContentComponent } from './components/test-ng-content/test-ng-content.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +28,10 @@ import { EmployeeDeleteModalComponent } from './components/employee/employee-del
     SalaryColorDirective,
     EmployeeNewModalComponent,
     AlertSuccessComponent,
-    MyCurrencyPipe
+    MyCurrencyPipe,
+    TesteComponent,
+    ModalComponent,
+    TestNgContentComponent
   ],
   imports: [
     BrowserModule,

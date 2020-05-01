@@ -9,7 +9,7 @@
   - Quick Start ```https://angular.io/start```
 
 ## Repositórios do projeto
-- Repositório GIT ANGULAR7 COMPONENTES INTERMEDIÁRIO(ATUAL)
+- Repositório GIT ANGULAR7 COMPONENTES INTERMEDIÁRIO(ATUAL) ```https://github.com/emiliojva/emiliojva-angular2-sete-componentes-intermediario```
 - Repositório GIT ANGULAR7 COMPONENTES```https://github.com/emiliojva/emiliojva-angular2-sete-componentes```  
 - Repositório GIT ANGULAR7 STARTED ```https://github.com/emiliojva/emiliojva-angular2-sete```  
   
@@ -128,4 +128,208 @@
     /* . . . */
     }
     ```
-    
+
+## Criando componentes inlines
+  - Criando um Component simplificado com angular cli : 
+  ```
+  npm run ng g component ./components/Modal --inline-template --inline-styles
+  ```
+  - Refatorando AlertComponent para um Component inline-(style|template)
+    ```
+    import { Component } from '@angular/core';
+
+    @Component({
+      selector: 'alert-success',
+      template: `
+        <div class="alert alert-success" role="alert">
+          <ng-content></ng-content>
+        </div>`,
+      styles: ['.alert { text-transform:uppercase}'],
+    })
+    export class AlertSuccessComponent {}
+    ```
+  - Foram deletados os arquivos .scss e .html do Component
+
+## Criando componente genérico modal para o recurso modal bootstrap(componente bootstrap) 
+  - Criando componente Modal Genérico de forma simplificada.
+    ```
+    ng g component ./components/modal --inline-template --inline-style
+    ```
+  - Modal do Component Modal aceitando tags ```modal-[title,body,footer]```
+    ```
+    import { Component, OnInit } from '@angular/core';
+    @Component({
+      selector: 'modal',
+      template: `
+      <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <ng-content></ng-content>
+          </div>
+        </div>
+      </div>
+      `,
+      styles: [
+      ]
+    })
+    export class ModalComponent implements OnInit {
+     constructor(private element: ElementRef) { }
+
+      ngOnInit(): void {
+      }
+
+      show(){
+        const divModal = this.getDivModal();
+        $(divModal).modal('show');
+
+      }
+
+      hide(){
+        const divModal = this.getDivModal();
+        $(divModal).modal('hide')
+      }
+
+      getDivModal(): HTMLElement{
+        const elementDOM:HTMLElement = this.element.nativeElement;
+        // return elementDOM.firstElementChild as HTMLElement;
+        return elementDOM.querySelector('.modal') as HTMLElement;
+      }
+    }
+    ```
+  - Desta forma podemos encapsular todo wrapper de tags para gerar um modal no bootstrap
+  usando agora apenas a tag ```<modal>``` em qualquer outra viewComponent e inserir apenas o content necessário paras as seções(divs .modal) title, body e footer
+    ```
+    <modal>
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Novo Empregado</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="form-group">
+          <label for="name">Name:</label>
+          <input name="name" type="text" [(ngModel)]="employee.name"/>
+        </div>
+
+        <div class="form-group">
+          <label for="salary">Salary:</label>
+          <input name="salary" type="number" [(ngModel)]="employee.salary"/>
+        </div>
+
+        <div class="form-group">
+
+          <!-- diretiva hidden -->
+          <div [hidden]="employee.salary<1000">
+            <label for="bonus">Bonus:</label>
+            <input name="bonus" type="number" [(ngModel)]="employee.bonus"/>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Incluir</button>
+        <!-- <button type="button" (click)="addEmployee($event)">adicionar</button> -->
+      </div>
+
+    </modal>
+    ```  
+  - Mais ainda sim precisamos pegar o component filho com ViewChild(ModalComponent). Para ter a instancia do Modal Component chamado <modal> dentro da view pai. A classe do component EmployeeNewComponent ficaria assim: 
+    ```  
+    export class EmployeeNewModalComponent implements OnInit {
+
+      employee: Employee;
+
+      @Output()
+      onSubmit:EventEmitter<Employee> = new EventEmitter<Employee>();
+      @ViewChild(ModalComponent)
+      modal:ModalComponent;
+
+      constructor(private element: ElementRef, public employeeService: EmployeeService) {
+        this.employee = {name:'',salary:0};
+      }
+
+      ngOnInit(): void {
+      }
+
+      addEmployee(event: Event){
+        // event.preventDefault();
+        let copy:Employee = Object.assign({}, this.employee);
+        copy.bonus = copy.salary >= 1000 ? 0 : copy.bonus;
+        this.employeeService.addEmployee(copy);
+        this.onSubmit.emit(copy);
+        this.hide();
+      }
+
+      show(){
+        this.modal.show()
+      }
+
+      hide(){
+        this.modal.hide();
+      }
+    }
+    ```  
+
+## ng-content targeted
+  Dividir um Component em vários ng-contents, específicos.
+  - Reference ```https://blog.angular-university.io/angular-ng-content/```
+  - Propriedade select=""
+    ```
+    <div>
+      <ng-content select="div"></ng-content>
+    </div>
+    <div>
+      <ng-content select="outra-div"></ng-content>
+    </div>
+    ```
+  - Exemplo de um ng-content que casa dois elemento <p> ou um elemento com a propriedade ```sunda```
+    ```
+    import { Component, OnInit } from '@angular/core';
+
+    @Component({
+      selector: 'test-ng-content',
+      template: `
+        <section>
+          <p>
+            <ng-content select="modal"></ng-content>
+          </p>
+
+          <p>
+            <ng-content select="div"></ng-content>
+          </p>
+
+          <p>
+            <ng-content select="[sunda]"></ng-content>
+          </p>
+
+        </section>
+      `,
+      styles: [
+      ]
+    })
+    export class TestNgContentComponent implements OnInit {
+
+      constructor() { }
+
+      ngOnInit(): void {
+      }
+
+    }
+    ```
+  - No viewComponent
+    ```
+    <test-ng-content>
+      <div>conteudo</div>
+      <modal></modal> 
+      <!-- Mesmo alterando a posição dos ng-content válidos, não altera a saída definida no component pai TestNgContent -->
+      <span bunda>É possível usar ng-content capturando por atributo</span>
+      <span>outro texto</span> <!--Span será descartado. POis não existe ng-content com este seletor definido-->
+    </test-ng-content>
+    ```
