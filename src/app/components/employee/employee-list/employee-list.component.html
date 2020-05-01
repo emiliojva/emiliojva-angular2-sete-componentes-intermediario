@@ -1,0 +1,42 @@
+<section class="container">
+
+  <!-- <p [hidden]="!showMessageSuccess">Empregado {{ newEmployeeAdded?.name }} cadastrado!</p> -->
+
+  <alert-success [hidden]="!showMessageSuccess">Empregado {{ newEmployeeAdded?.name }} cadastrado!</alert-success>
+
+  <div class="row">
+
+    <h1>Nossos Empregados</h1>
+
+    {{data | date:'dd/MM/yyyy'}}
+    {{data | date:'fullDate' | uppercase}}
+
+    <div class="col-12">
+      <button type="button" class="btn btn-primary" (click)="showNewEmployeeModal($event)">Adicionar Empregado</button>
+    </div>
+
+    <!--  -->
+    <div class="card employee-card"  *ngFor="let emp of employees">
+      <p [innerHTML]="emp.salary"
+      [salaryColor]="emp.salary"
+      x="10"></p>
+      <svg class="bd-placeholder-img card-img-top" width="100%" height="180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Image cap"><title>Placeholder</title><rect width="100%" height="100%" fill="#868e96"></rect><text x="50%" y="50%" fill="#dee2e6" dy=".3em">Image cap</text></svg>
+      <div class="card-body">
+        <h5 class="card-title"  [innerHTML]=" 'Name: '+ (emp.name | uppercase) ">Card title</h5>
+        <p class="card-text" [innerHTML]=" 'Salary: ' + (emp.salary | myCurrency)"
+        [salaryColor]="emp.salary"
+        ></p>
+        <p *ngIf="emp.bonus"
+        [innerHTML]=" 'Bonus:'+ emp.bonus "></p>
+        <a href="javascript:void(0)" class="btn btn-primary" (click)="showEditEmployeeModal(emp)">Editar</a>
+        &nbsp;
+        <a href="javascript:void(0)" class="btn btn-danger" (click)="showDeleteEmployeeModal(emp)">Excluir</a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<employee-new-modal #employeeNewModal (onSubmit)="onNewEmployee($event)"></employee-new-modal>
+<employee-edit-modal #employeeEditModal (onSubmit)="onEditEmployee($event)" [employee]="editedEmployee"></employee-edit-modal>
+<employee-delete-modal #employeeDeleteModal (onDestroy)="onDestroyEmployee($event)"></employee-delete-modal>

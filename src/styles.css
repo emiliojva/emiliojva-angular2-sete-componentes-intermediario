@@ -1,0 +1,11 @@
+/* You can add global styles to this file, and also import other style files */
+html, body {
+  background-color: #acb3b1;
+  margin: 0px;
+  padding: 0px;
+}
+
+:root {
+  --color-red: rgba(200,1,1,.8);
+}
+/*# sourceMappingURL=styles.css.map */
