@@ -436,3 +436,51 @@
 
     }
     ```
+
+## Abstraindo comportamentos com herança
+  - Criando generalização com classe Modalable
+    ```
+    import { ViewChild, Output, EventEmitter } from '@angular/core';
+    import { ModalComponent } from './modal.component';
+
+    export abstract class Modalable {
+
+      @Output()
+      onSubmit:EventEmitter<any> = new EventEmitter<any>();
+      @ViewChild(ModalComponent)
+      modal:ModalComponent;
+
+      show(){
+        this.modal.show()
+      }
+
+      hide(){
+        this.modal.hide();
+      }
+
+    }
+    ```
+  - Classe do Component EmployeeNewModal após herdar Modable. Refactor.
+
+    ```
+    export class EmployeeNewModalComponent extends Modalable implements OnInit {
+
+      employee: Employee;
+
+      constructor(private element: ElementRef, public employeeService: EmployeeService) {
+        super();
+        this.onSubmit = new EventEmitter<Employee>();
+        this.employee = {name:'',salary:0};
+      }
+
+      ngOnInit(): void {}
+
+      addEmployee(event: Event){
+        let copy:Employee = Object.assign({}, this.employee);
+        copy.bonus = copy.salary >= 1000 ? 0 : copy.bonus;
+        this.employeeService.addEmployee(copy);
+        this.onSubmit.emit(copy);
+        this.hide();
+      }
+    }
+    ```
