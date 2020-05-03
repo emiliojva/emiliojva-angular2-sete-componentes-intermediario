@@ -1,19 +1,45 @@
-import { ViewChild, Output, EventEmitter } from '@angular/core';
+import { ViewChild, OnInit, EventEmitter, Output, Component } from '@angular/core';
 import { ModalComponent } from './modal.component';
 
-export abstract class Modalable {
+declare const $;
+
+export class Modalable{
+
+  id:string;
 
   @Output()
-  onSubmit:EventEmitter<any> = new EventEmitter<any>();
+  onShow:EventEmitter<any> = new EventEmitter<any>();
+  @Output()
+  onHide:EventEmitter<any> = new EventEmitter<any>();
+
   @ViewChild(ModalComponent)
   modal:ModalComponent;
 
+  constructor(){
+    console.log(this);
+  }
+
   show(){
-    this.modal.show()
+    /**
+     * Apenas quando o modal for mostrado pela primeira vez
+     */
+    if(this.id==undefined){
+      this.id = this.constructor.name;
+      this.modal.onHide.subscribe( (e)=>{
+        this.onHide.emit(e);
+      });
+
+      this.modal.onShow.subscribe( (e)=>{
+        this.onShow.emit(e);
+      })
+    }
+
+    this.modal.show();
   }
 
   hide(){
     this.modal.hide();
   }
+
 
 }

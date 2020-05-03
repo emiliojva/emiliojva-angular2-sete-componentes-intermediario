@@ -68,7 +68,8 @@
   * Getstared ```https://angular.io/start```
   * Repositório GIT ANGULAR7 COMPONENTES```https://github.com/emiliojva/emiliojva-angular2-sete-componentes```  
   * Repositório GIT ANGULAR7 STARTED ```https://github.com/emiliojva/emiliojva-angular2-sete```  
-  
+  * Angular-cli ```https://angular.io/guide/cli-builder```
+  * Instalação de versões diferentes package.json
   
 ## Componentes - Intro
   Um componente controla um pedaço de tela chamado ```view```. Por exemplo, componentes individuais definem e controlam suas próprias views
@@ -481,6 +482,93 @@
         this.employeeService.addEmployee(copy);
         this.onSubmit.emit(copy);
         this.hide();
+      }
+    }
+    ```
+
+
+## Abstraindo eventos de fechar e abrir o modal
+
+  - Todo fluxo do modal(input,output,eventos, controles, ids) passa ser responsabilidade de uma classe generica. 
+  ```
+  import { ViewChild, OnInit, EventEmitter, Output, Component } from '@angular/core';
+  import { ModalComponent } from './modal.component';
+
+  declare const $;
+
+  export class Modalable{
+
+    id:string;
+
+    @Output()
+    onShow:EventEmitter<any> = new EventEmitter<any>();
+    @Output()
+    onHide:EventEmitter<any> = new EventEmitter<any>();
+
+    @ViewChild(ModalComponent)
+    modal:ModalComponent;
+
+    constructor(){ console.log(this); }
+
+    show(){
+      /**
+      * Apenas quando o modal for mostrado pela primeira vez
+      */
+      if(this.id==undefined){
+        this.id = this.constructor.name;
+        this.modal.onHide.subscribe( (e)=>{
+          this.onHide.emit(e);
+        });
+
+        this.modal.onShow.subscribe( (e)=>{
+          this.onShow.emit(e);
+        })
+      }
+
+      this.modal.show();
+    }
+
+    hide(){ this.modal.hide(); }
+  }
+  ```
+  - Os componentes passam a capturar todos os eventos genericos contigos em Modalable 
+  ```
+  <employee-new-modal #employeeNewModal (onSubmit)="onNewEmployee($event)" (onShow)="onShowModal($event)" (onHide)="onHideModal($event)"></employee-new-modal>
+  <employee-edit-modal #employeeEditModal (onSubmit)="onEditEmployee($event)" [employee]="editedEmployee" (onShow)="onShowModal($event)" (onHide)="onHideModal($event)"></employee-edit-modal>
+  <employee-delete-modal #employeeDeleteModal (onDestroy)="onDestroyEmployee($event)"></employee-delete-modal>
+  ```
+
+  - Bastando agora, qualquer componente herdar a classe Modalable, para ter acesso a propriedade modal. A propriedade modal contém a instancia de um ModalComponent e todos os seus métodos comuns.
+
+    ```
+    @Component({
+    })
+    export class EmployeeNewModalComponent extends Modalable implements OnInit {
+      constructor(public employeeService: EmployeeService) {
+        super();
+      }
+      
+      /**
+      * Cycle life - ngOnInit
+      * Um Hook de ciclo de vida chamado após Angular inicializou todas as propriedades ligadas a dados de uma diretiva. 
+      * Defina um método ngOnInit () para lidar com quaisquer tarefas adicionais de inicialização.
+      * MONITORA CICLO DE VIDA APENAS DO COMPONENTE RAIZ. 
+      * NÃO SERÃO MONITORADOS CICLO DE VIDA DOS FILHO
+      * @see https://angular.io/api/core/OnInit
+      */
+      ngOnInit(): void {}
+
+      /**
+      * Cycle life - Um Hook de ciclo de vida chamado depois que o Angular inicializou completamente a exibição de um componente. 
+      * Defina um método ngAfterViewInit() para lidar com quaisquer tarefas adicionais de inicialização.
+      * MONITORA CICLO DE VIDA COMPONENTE RAIZ E FILHOS. 
+      * TODOS OS CHILDS ESTARÃO DISPONÍVEIS
+      * @see https://angular.io/api/core/AfterViewInit
+      */
+      ngAfterViewInit(){}
+
+      hideModal(){
+        this.modal.hide();
       }
     }
     ```

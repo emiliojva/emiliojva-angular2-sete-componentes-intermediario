@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 // import {employees} from '../mocks/employees';
 import { EmployeeService, Employee } from 'src/app/services/employee-service';
-import { EmployeeNewComponent } from '../employee-new/employee-new.component';
 import { EmployeeNewModalComponent } from '../employee-new-modal/employee-new-modal.component';
 import { EmployeeEditModalComponent } from '../employee-edit-modal/employee-edit-modal.component';
 import { EmployeeDeleteModalComponent } from '../employee-delete-modal/employee-delete-modal.component';
@@ -71,6 +70,14 @@ export class EmployeeListComponent implements OnInit {
   onDestroyEmployee(event){
     console.log(event);
     this.employeeDeleteModal.hide();
+  }
+
+  onShowModal(event: Event){
+    console.log('showModal',event);
+  }
+
+  onHideModal(event: Event){
+    console.log('hideModal',event);
   }
 
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, ElementRef, Output, EventEmitter, Input } from '@angular/core';
 import { EmployeeService, Employee } from 'src/app/services/employee-service';
+import { Modalable } from '../../modal/modalable';
 
 declare const $;
 
@@ -8,7 +9,7 @@ declare const $;
   templateUrl: './employee-edit-modal.component.html',
   styleUrls: ['./employee-edit-modal.component.scss']
 })
-export class EmployeeEditModalComponent implements OnInit {
+export class EmployeeEditModalComponent extends Modalable implements OnInit {
 
   @Output()
   onSubmit:EventEmitter<Employee> = new EventEmitter<Employee>();
@@ -16,8 +17,8 @@ export class EmployeeEditModalComponent implements OnInit {
   @Input()
   employee: Employee;
 
-  constructor(private element: ElementRef, public employeeService: EmployeeService) {
-
+  constructor(public employeeService: EmployeeService) {
+    super();
   }
 
 
@@ -33,20 +34,4 @@ export class EmployeeEditModalComponent implements OnInit {
     this.hide();
   }
 
-  show(){
-    const divModal = this.getDivModal();
-    $(divModal).modal('show');
-
-  }
-
-  hide(){
-    const divModal = this.getDivModal();
-    $(divModal).modal('hide')
-  }
-
-  getDivModal(): HTMLElement{
-    const elementDOM:HTMLElement = this.element.nativeElement;
-    // return elementDOM.firstElementChild as HTMLElement;
-    return elementDOM.querySelector('.modal') as HTMLElement;
-  }
 }

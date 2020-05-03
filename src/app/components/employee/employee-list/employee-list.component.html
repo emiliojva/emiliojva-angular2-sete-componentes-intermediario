@@ -37,6 +37,6 @@
 
 </section>
 
-<employee-new-modal #employeeNewModal (onSubmit)="onNewEmployee($event)"></employee-new-modal>
-<employee-edit-modal #employeeEditModal (onSubmit)="onEditEmployee($event)" [employee]="editedEmployee"></employee-edit-modal>
+<employee-new-modal #employeeNewModal (onSubmit)="onNewEmployee($event)" (onShow)="onShowModal($event)" (onHide)="onHideModal($event)"></employee-new-modal>
+<employee-edit-modal #employeeEditModal (onSubmit)="onEditEmployee($event)" [employee]="editedEmployee" (onShow)="onShowModal($event)" (onHide)="onHideModal($event)"></employee-edit-modal>
 <employee-delete-modal #employeeDeleteModal (onDestroy)="onDestroyEmployee($event)"></employee-delete-modal>

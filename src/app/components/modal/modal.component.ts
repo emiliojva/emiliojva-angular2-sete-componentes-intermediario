@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, EventEmitter, Output, Input } from '@angular/core';
 
 declare const $; // declaração do jQuery Symbol, para anular chamada do tsconfig.json(compilador)
 
@@ -29,15 +29,23 @@ declare const $; // declaração do jQuery Symbol, para anular chamada do tsconf
 })
 export class ModalComponent implements OnInit {
 
-  constructor(private element: ElementRef) { }
+  @Output()
+  onShow:EventEmitter<any> = new EventEmitter<any>();
+  @Output()
+  onHide:EventEmitter<any> = new EventEmitter<any>();
+
+  constructor(private element: ElementRef) { 
+    console.log(this)
+  }
 
   ngOnInit(): void {
 
-    const modal = this.getDivModal();
-
+    const modal = this.divModal;
+    
     if(modal){
       
-      console.log(`Modal Component criado  dentro de ${modal.parentElement.parentElement.tagName}`);
+      // modal.setAttribute('id',this.id);
+      // console.log(`new ModalComponent() - Modal Component criado  dentro de ${modal.parentElement.parentElement.tagName}`);
 
       if(modal.querySelector('[modal-title]'))
         modal.querySelector('[modal-title]').classList.add('modal-title')
@@ -48,21 +56,29 @@ export class ModalComponent implements OnInit {
       if(modal.querySelector('[modal-footer]'))
         modal.querySelector('[modal-footer]').classList.add('modal-footer');
 
+      /**
+       * Bootstrap Modal Events
+       */
+      $(modal)
+        .on('shown.bs.modal' , (e)=>{
+          this.onShow.emit(e);
+        })
+        .on('hidden.bs.modal' , (e)=>{
+          this.onHide.emit(e);
+        });
     }
 
   }
 
   show(){
-    const divModal = this.getDivModal();
-    $(divModal).modal('show');
+    $(this.divModal).modal('show');
   }
 
   hide(){
-    const divModal = this.getDivModal();
-    $(divModal).modal('hide')
+    $(this.divModal).modal('hide')
   }
 
-  getDivModal(): HTMLElement{
+  get divModal(): HTMLElement{
     const elementDOM:HTMLElement = this.element.nativeElement;
     // return elementDOM.firstElementChild as HTMLElement;
     return elementDOM.querySelector('.modal') as HTMLElement;

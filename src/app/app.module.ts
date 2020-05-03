@@ -1,3 +1,10 @@
+/**
+ * PACOTE Implementa a funcionalidade principal
+ * Os serviços de baixo nível e os utilitários da Angular. 
+ * Define a infraestrutura de classe para componentes, exibe hierarquias, detecção de alterações, renderização e manipulação de eventos. 
+ * Define os decoradores que fornecem metadados e contexto para construções angulares. Define a infraestrutura para injeção de dependência (DI), internacionalização (i18n) e vários recursos de teste e depuração.
+ * @see https://angular.io/api/core#ngmodules
+ */
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
